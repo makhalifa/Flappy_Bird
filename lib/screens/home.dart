@@ -13,7 +13,13 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Flappy Bird"),
+        title: const Text("Flappy Bird test"),
+      ),
+      body: Column(
+        children: [
+          const Text("Hello flutter"),
+          Image.asset("assets/images/General Sprites.png")
+        ],
       ),
     );
   }
