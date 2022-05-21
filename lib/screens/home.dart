@@ -18,7 +18,7 @@ class _HomeState extends State<Home> {
       body: Column(
         children: [
           const Text("Hello flutter"),
-          Image.asset("assets/images/General Sprites.png")
+          Image.asset("assets/images/example/splash_screen.jpeg")
         ],
       ),
     );
