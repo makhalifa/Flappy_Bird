@@ -12,14 +12,14 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Flappy Bird test"),
-      ),
-      body: Column(
-        children: [
-          const Text("Hello flutter"),
-          Image.asset("assets/images/example/splash_screen.jpeg")
-        ],
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/sprites/background.png"),
+            fit: BoxFit.cover
+          )
+
+        )
       ),
     );
   }
