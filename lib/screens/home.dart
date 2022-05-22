@@ -13,13 +13,11 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("assets/images/sprites/background.png"),
-            fit: BoxFit.cover
-          )
-
-        )
+              image: AssetImage("assets/images/sprites/background.png"),
+              fit: BoxFit.cover),
+        ),
       ),
     );
   }
