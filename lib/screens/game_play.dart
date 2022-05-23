@@ -1,6 +1,8 @@
 import 'dart:async';
 
-import 'package:flappy_bird/models/bird.dart';
+import 'package:flappy_bird/bird_animation/bird_flying.dart';
+import 'package:flappy_bird/models/barrier.dart';
+import 'package:flappy_bird/bird_animation/bird_idle.dart';
 import 'package:flutter/material.dart';
 
 class GamePlay extends StatefulWidget {
@@ -17,13 +19,25 @@ class _GamePlayState extends State<GamePlay> {
   double time = 0;
   double gravity = -4.9; // how strong the gravity is
   double velocity = 3; // how strong the jump is
+  double birdWidth = 0.2;
+  double birdHeight = 0.2;
 
   // Game setting
   bool gameHasStarted = false;
 
+  // barrier variables
+  static List<double> barrierX = [2, 2 + 1.5];
+  static double barrierWidth = 0.5;
+  List<List<double>> barrierHeight = [
+    // out of 2. where 2 is the entire height of the screen
+    // [toHeight, bottomHeight]
+    [0.6, 0.4],
+    [0.4, 0.6]
+  ];
+
   void startGame() {
     gameHasStarted = true;
-    Timer.periodic(Duration(milliseconds: 10), (timer) {
+    Timer.periodic(const Duration(milliseconds: 10), (timer) {
       // a real physical jump is the same as an upside down parabola
       // so this is a simple quadratic equation
       height = gravity * time * time + velocity * time;
@@ -51,14 +65,15 @@ class _GamePlayState extends State<GamePlay> {
       initialPos = birdY;
     });
   }
+
   void _showDialog() {
     showDialog(
-        context:context,
+        context: context,
         barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialog(
             backgroundColor: Colors.brown,
-            title: Center(
+            title: const Center(
               child: Text(
                 "G A M E  O V E R",
                 style: TextStyle(color: Colors.white),
@@ -70,9 +85,9 @@ class _GamePlayState extends State<GamePlay> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(5),
                   child: Container(
-                    padding: EdgeInsets.all(7),
+                    padding: const EdgeInsets.all(7),
                     color: Colors.white,
-                    child: Text(
+                    child: const Text(
                       'Play Again',
                       style: TextStyle(color: Colors.brown),
                     ),
@@ -83,16 +98,31 @@ class _GamePlayState extends State<GamePlay> {
           );
         });
   }
+
   void jump() {
     setState(() {
       time = 0;
       initialPos = birdY;
     });
   }
+
   bool birdIsDead() {
-    if (birdY < -1.7 || birdY > 1.7) {
+    // check if the bird is hitting the top or the bottom of the screen
+    if (birdY < -1 || birdY > 1) {
       return true;
     }
+
+    // hits barriers
+    // check if the bird is hitting a barrier
+    for (int i = 0; i < barrierX.length; i++) {
+      if (barrierX[i] <= birdHeight &&
+          barrierX[i] + barrierWidth >= -birdWidth &&
+          (birdY <= -1 + barrierHeight[i][0] ||
+              birdY + birdHeight >= 1 - barrierHeight[i][1])) {
+        return true;
+      }
+    }
+
     return false;
   }
 
@@ -101,37 +131,92 @@ class _GamePlayState extends State<GamePlay> {
     return GestureDetector(
       onTap: gameHasStarted ? jump : startGame,
       child: Scaffold(
-        body: Column(
-          children: [
-            Expanded(
-              flex: 3,
-              child: Container(
-                color: Colors.blue,
-                child: Center(
-                  child: Stack(
-                    children: [
-                      MyBird(
-                        birdY,
-                      ),
-                      Container(
-                        alignment: Alignment(0, -0.5),
-                        child: Text(
-                          gameHasStarted ? '' : 'T A P  T O  PLAY ',
-                          style: TextStyle(color: Colors.white, fontSize: 20),
+        body: Container(
+          decoration: const BoxDecoration(
+              image: DecorationImage(
+            image: AssetImage("assets/images/sprites/background.png"),
+            fit: BoxFit.fill,
+          )),
+          child: Column(
+            children: [
+              Expanded(
+                flex: 5,
+                child: Container(
+                  color: Colors.transparent,
+                  child: Center(
+                    child: Stack(
+                      children: [
+                        birdIsDead()
+                            ? BirdIdle(
+                                birdY: birdY,
+                                birdWidth: birdWidth,
+                                birdHeight: birdHeight,
+                              )
+                            : BirdFly(
+                                birdY: birdY,
+                                birdWidth: birdWidth,
+                                birdHeight: birdHeight,
+                              ),
+                        Container(
+                          alignment: const Alignment(0, -0.5),
+                          child: Text(
+                            gameHasStarted ? '' : 'T A P  T O  PLAY ',
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 20),
+                          ),
                         ),
-                      )
-                    ],
+
+                        // Top Barrier 0
+                        MyBarrier(
+                          barrierX: barrierX[0],
+                          barrierWidth: barrierWidth,
+                          barrierHeight: barrierHeight[0][0],
+                          isThisBottomBarrier: false,
+                        ),
+
+                        // Bottom Barrier 0
+                        MyBarrier(
+                          barrierX: barrierX[0],
+                          barrierWidth: barrierWidth,
+                          barrierHeight: barrierHeight[0][1],
+                          isThisBottomBarrier: true,
+                        ),
+
+                        // Top Barrier 1
+                        MyBarrier(
+                          barrierX: barrierX[0],
+                          barrierWidth: barrierWidth,
+                          barrierHeight: barrierHeight[1][0],
+                          isThisBottomBarrier: false,
+                        ),
+
+                        // Bottom Barrier 1
+                        MyBarrier(
+                          barrierX: barrierX[0],
+                          barrierWidth: barrierWidth,
+                          barrierHeight: barrierHeight[1][1],
+                          isThisBottomBarrier: true,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            Expanded(
-              child: Container(
-                color: Colors.brown,
-                // image: Image.asset("assets/images/sprites/ground.png")
-              ),
-            )
-          ],
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(0),
+                  child: Container(
+                    // color: Colors.brown,
+                    decoration: const BoxDecoration(
+                        image: DecorationImage(
+                      image: AssetImage("assets/images/sprites/ground.png"),
+                      fit: BoxFit.fill,
+                    )),
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
