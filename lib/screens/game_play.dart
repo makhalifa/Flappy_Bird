@@ -50,10 +50,22 @@ class _GamePlayState extends State<GamePlay> {
         timer.cancel();
         _showDialog();
       }
+      moveMap();
 
       // keep the time going
       time += 0.01;
     });
+  }
+
+  void moveMap() {
+    for (int i = 0; i < barrierX.length; i++) {
+      setState(() {
+        barrierX[i] -= 0.005;
+      });
+      if (barrierX[i] < -1.5) {
+        barrierX[i] += 3;
+      }
+    }
   }
 
   void resetGame() {
@@ -63,6 +75,15 @@ class _GamePlayState extends State<GamePlay> {
       gameHasStarted = false;
       time = 0;
       initialPos = birdY;
+
+      barrierX = [2, 2 + 1.5];
+      barrierWidth = 0.5;
+      barrierHeight = [
+        // out of 2. where 2 is the entire height of the screen
+        // [toHeight, bottomHeight]
+        [0.6, 0.4],
+        [0.4, 0.6]
+      ];
     });
   }
 
@@ -122,7 +143,6 @@ class _GamePlayState extends State<GamePlay> {
         return true;
       }
     }
-
     return false;
   }
 

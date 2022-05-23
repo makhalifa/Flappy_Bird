@@ -6,6 +6,7 @@ class MyBarrier extends StatelessWidget {
   final barrierX;
   final bool isThisBottomBarrier;
 
+  // ignore: use_key_in_widget_constructors
   const MyBarrier(
       {this.barrierWidth,
       this.barrierHeight,
@@ -15,8 +16,7 @@ class MyBarrier extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      alignment: Alignment((2 * barrierX + barrierWidth) / (2 - barrierWidth),
-          isThisBottomBarrier ? 1 : -1),
+      alignment: Alignment((2 * barrierX + barrierWidth) / (2 - barrierWidth),isThisBottomBarrier ? 1 : -1),
       child: Container(
         color: Colors.green,
         width: MediaQuery.of(context).size.width * barrierWidth / 2,

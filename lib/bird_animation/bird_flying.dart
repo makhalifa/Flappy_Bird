@@ -27,7 +27,7 @@ class _BirdFlyState extends State<BirdFly> {
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment(0, widget.birdY),
-      child: TimerBuilder.periodic(const Duration(milliseconds: 300),
+      child: TimerBuilder.periodic(const Duration(milliseconds: 150),
           builder: (context) {
         currentFrameIndex = (currentFrameIndex + 1) % frames.length;
         return Image.asset(
