@@ -17,7 +17,7 @@ class MyHome extends StatefulWidget {
 class _MyHomeState extends State<MyHome> {
   double y = -0.4;
   bool isFlyingDown = true;
-  final audioplayer = AudioCache();
+
   @override
   Widget build(BuildContext context) {
     return TimerBuilder.periodic(const Duration(milliseconds: 100),
@@ -62,7 +62,8 @@ class _MyHomeState extends State<MyHome> {
                             Navigator.push(context, MaterialPageRoute(
                             builder: (context) {
                             return GamePlay();
-                            audioplayer.play('sounds/sfx_swooshing.wav');
+                            final player = AudioCache();
+                            player.play('sounds/sfx_swooshing.wav');
                             },
                             ))
 
