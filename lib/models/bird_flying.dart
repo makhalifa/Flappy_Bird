@@ -6,9 +6,14 @@ class BirdFlying extends StatefulWidget {
   final alpha;
   final double birdWidth;
   final double birdHeight;
+  final birdX;
 
   const BirdFlying(
-      {this.birdY, required this.birdWidth, required this.birdHeight,this.alpha});
+      {this.birdY,
+      this.birdX = 0.0,
+      required this.birdWidth,
+      required this.birdHeight,
+      this.alpha});
 
   @override
   State<BirdFlying> createState() => _BirdFlyingState();
@@ -31,21 +36,21 @@ class _BirdFlyingState extends State<BirdFlying> {
       currentFrameIndex = (currentFrameIndex + 1) % frames.length;
 
       return Container(
-            alignment: Alignment(0, widget.birdY),
-            child: RotationTransition(
+        alignment: Alignment(widget.birdX, widget.birdY),
+        child: RotationTransition(
           turns: AlwaysStoppedAnimation(widget.alpha / 360),
-              child: Image.asset(
-                frames[currentFrameIndex],
-                width: MediaQuery.of(context).size.width * widget.birdWidth / 2,
-                height: MediaQuery.of(context).size.height *
-                    3 /
-                    4 *
-                    widget.birdHeight /
-                    2,
-                fit: BoxFit.fill,
-              ),
-            ),
-          );
+          child: Image.asset(
+            frames[currentFrameIndex],
+            width: MediaQuery.of(context).size.width * widget.birdWidth / 2,
+            height: MediaQuery.of(context).size.height *
+                3 /
+                4 *
+                widget.birdHeight /
+                2,
+            fit: BoxFit.fill,
+          ),
+        ),
+      );
     });
   }
 }

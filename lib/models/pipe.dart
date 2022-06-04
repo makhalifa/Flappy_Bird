@@ -19,12 +19,13 @@ class MyPipe extends StatelessWidget {
           (2 * pipeX + pipeWidth) / (2 - pipeWidth), isThisBottomPipe ? 1 : -1),
       child: Container(
         
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: Colors.white,
-          width: 1,
-        ),
-      ),
+      // decoration: BoxDecoration(
+      //   border: Border.all(
+      //     color: Colors.white,
+      //     width: 1,
+      //   ),
+      // ),
+      
         // color: Colors.green,
         child: Image.asset(
           isThisBottomPipe
