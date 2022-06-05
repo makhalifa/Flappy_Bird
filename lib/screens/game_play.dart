@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:bird_game/models/bird_flying.dart';
 import 'package:bird_game/models/bird_dead.dart';
+import 'package:bird_game/models/decorated_text_2.dart';
 import 'package:bird_game/models/decoreted_text.dart';
 import 'package:bird_game/models/get_ready.dart';
 import 'package:bird_game/models/pipe.dart';
@@ -19,7 +21,7 @@ class GamePlay extends StatefulWidget {
 
 class _GamePlayState extends State<GamePlay> {
   static int gameScore = 0;
-  static int bestScore = max(bestScore, gameScore);
+  static int bestScore = 0;
   List<bool> pipeIsNew = [true, true];
 
   final audioPlayer = AudioCache();
@@ -39,6 +41,7 @@ class _GamePlayState extends State<GamePlay> {
 
   // game setting
   bool gameHasStarted = false;
+  bool gameIsPaused = false;
 
   // ground setting
   List<double> groundX = [0, 5590];
@@ -52,6 +55,8 @@ class _GamePlayState extends State<GamePlay> {
     [0.6, 0.4],
     [0.6, 0.4],
   ];
+
+  late Timer timer;
 
   // TODO Start Game
   void startGame() {
@@ -72,7 +77,7 @@ class _GamePlayState extends State<GamePlay> {
           if (pipeX[i] + pipeWidth <= -1) {
             pipeX[i] = 1.5;
             pipeIsNew[i] = true;
-            Random random = new Random();
+            Random random = Random();
             double x = (random.nextInt(6) + 2) / 10;
             print("random number is: $x");
             pipeHeight[i] = [x, 1 - x];
@@ -105,7 +110,7 @@ class _GamePlayState extends State<GamePlay> {
       // check if bird is dead
       if (birdIsDead()) {
         timer.cancel();
-        _gameOver();
+        _gameOver(gameScore.toString(), bestScore.toString());
       }
 
       // check if bird is passed one pipe
@@ -113,6 +118,10 @@ class _GamePlayState extends State<GamePlay> {
         if (birdWidth >= pipeX[i] + pipeWidth && pipeIsNew[i]) {
           pipeIsNew[i] = false;
           gameScore += 1;
+          bestScore = max(bestScore, gameScore);
+
+          // audio player
+          audioPlayer.play('sounds/sfx_point.wav');
         }
       }
 
@@ -143,38 +152,112 @@ class _GamePlayState extends State<GamePlay> {
   }
 
   // TODO show Game Over
-  Future<void> _gameOver() async {
+  Future<void> _gameOver(String _gamescore, String _bestscore) async {
     await Future.delayed(const Duration(seconds: 1), () {
-      audioPlayer.play('sounds/sfx_die.wav');
+      if(bestScore <= gameScore) {
+        audioPlayer.play('sounds/elwaddah.mp3');
+      }else{
+        audioPlayer.play('sounds/sfx_die.wav');
+      }
+      // audioPlayer.play('sounds/sfx_die.wav');
       showDialog(
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) {
-          return AlertDialog(
-            backgroundColor: Colors.brown,
-            title:
-                const Center(child: MyText(myText: "GAME OVER", myFontSize: 20)
-                    // Text(
-                    //   "G A M E  O V E R",
-                    //   style: TextStyle(color: Colors.white),
-                    // ),
-                    ),
-            actions: [
-              GestureDetector(
-                onTap: resetGame,
-                child: ClipRRect(
-                    borderRadius: BorderRadius.circular(5),
-                    child: Container(
-                      padding: const EdgeInsets.all(7),
-                      color: Colors.white,
-                      child: const Text(
-                        'PLAY AGAIN',
-                        style: TextStyle(color: Colors.brown),
-                      ),
-                    )),
-              )
-            ],
-          );
+          return Stack(children: [
+            Container(
+              alignment: Alignment(0, -0.35),
+              child: Image.asset(
+                'assets/images/gameover.png',
+                // fit: BoxFit.fill,
+              ),
+            ),
+            Container(
+              alignment: Alignment(0, 0),
+              child: Image.asset(
+                'assets/images/score_board.png',
+                width: 325,
+                fit: BoxFit.fill,
+              ),
+            ),
+            Container(
+              alignment: Alignment(0.5, -0.07),
+              child: 
+              MyText2(myText: _gamescore, myFontSize: 20)
+              // Text(
+              //   _gamescore,
+              //   // "2",
+              //   style: const TextStyle(
+              //     fontSize: 20,
+              //     fontWeight: FontWeight.bold,
+              //     color: Colors.white,
+              //   ),
+              // ),
+            ),
+            Container(
+              alignment: Alignment(0.5, 0.1),
+              child: 
+              MyText2(myText: _bestscore, myFontSize: 20)
+              // Text(
+              //   _bestscore,
+              //   // "2",
+              //   style: const TextStyle(
+              //     fontSize: 20,
+              //     fontWeight: FontWeight.bold,
+              //     color: Colors.white,
+              //   ),
+              // ),
+            ),
+            GestureDetector(
+              onTap: resetGame,
+              child: Container(
+                alignment: Alignment(-0.65, 0.5),
+                child: Image.asset(
+                  'assets/images/ok_btn.png',
+                  width: 125,
+                  fit: BoxFit.fill,
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () => print("Clicked!"),
+              child: Container(
+                alignment: Alignment(0.65, 0.5),
+                child: Image.asset(
+                  'assets/images/share_btn.png',
+                  width: 125,
+                  fit: BoxFit.fill,
+                ),
+              ),
+            ),
+
+            // AlertDialog(
+            //   backgroundColor: Colors.transparent,
+            //   title: const Center(
+            //       child:
+            //       MyText(myText: "GAME OVER", myFontSize: 20)
+            //       // Text(
+            //       //   "G A M E  O V E R",
+            //       //   style: TextStyle(color: Colors.white),
+            //       // ),
+            //       ),
+            //   actions: [
+            //     GestureDetector(
+            //       onTap: resetGame,
+            //       child: ClipRRect(
+            //           borderRadius: BorderRadius.circular(5),
+            //           child: Container(
+            //             padding: const EdgeInsets.all(7),
+            //             color: Colors.white,
+            //             child: const Text(
+            //               'PLAY AGAIN',
+            //               style: TextStyle(color: Colors.brown),
+            //             ),
+            //           )),
+            //     )
+            //   ],
+            // ),
+          ]);
         },
       );
     });
@@ -215,6 +298,11 @@ class _GamePlayState extends State<GamePlay> {
     return false;
   }
 
+  void _PauseResumeBtn() {
+    gameIsPaused = !gameIsPaused;
+    print(gameIsPaused);
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -234,20 +322,6 @@ class _GamePlayState extends State<GamePlay> {
                   child: Center(
                       child: Stack(
                     children: [
-                      // TODO Bird Animation Flying
-                      birdIsDead()
-                          ? MyDeadBird(
-                              birdY: birdY,
-                              birdWidth: birdWidth,
-                              birdHeight: birdHeight,
-                            )
-                          : BirdFlying(
-                              birdY: birdY,
-                              birdWidth: birdWidth,
-                              birdHeight: birdHeight,
-                              alpha: alpha,
-                            ),
-
                       // tap to play
                       GetReady(started: gameHasStarted),
 
@@ -283,11 +357,47 @@ class _GamePlayState extends State<GamePlay> {
                         isThisBottomPipe: true,
                       ),
 
+                      // TODO Bird Animation Flying
+                      birdIsDead()
+                          ? MyDeadBird(
+                              birdY: birdY,
+                              birdWidth: birdWidth,
+                              birdHeight: birdHeight,
+                            )
+                          : BirdFlying(
+                              birdY: birdY,
+                              birdWidth: birdWidth,
+                              birdHeight: birdHeight,
+                              alpha: alpha,
+                            ),
+
                       // TODO Score
                       Container(
-                        alignment: Alignment(0, -0.85),
+                        alignment: const Alignment(0, -0.85),
                         child: MyText(
                             myText: gameScore.toString(), myFontSize: 50),
+                      ),
+
+                      // TODO Pause and Resume button
+                      Container(
+                        alignment: const Alignment(-0.9, -0.85),
+                        child: birdIsDead()
+                            ? Text("")
+                            : (GestureDetector(
+                                onTap: () => _PauseResumeBtn(),
+                                child: Container(
+                                  width: 35,
+                                  child: gameIsPaused
+                                      ? Image.asset(
+                                          "assets/images/resume_btn.png",
+                                          fit: BoxFit.fill,
+                                        )
+                                      : Image.asset(
+                                          "assets/images/pause_btn.png",
+                                          fit: BoxFit.fill,
+                                        ),
+                                ),
+                              )),
                       ),
                     ],
                   )),

@@ -17,7 +17,7 @@ class MyDeadBird extends StatelessWidget {
     return TimerBuilder.periodic(const Duration(milliseconds: 10),
         builder: (context) {
       if (birdY < 1) {
-        birdY += 0.05;
+        birdY += 0.04;
       }
       // Newton's law of free fall for a bird
       // v = g * t
@@ -26,7 +26,7 @@ class MyDeadBird extends StatelessWidget {
       return Container(
         alignment: Alignment(0, birdY),
         child: RotationTransition(
-          turns: AlwaysStoppedAnimation(90 / 360),
+          turns: const AlwaysStoppedAnimation(90 / 360),
           child: Image.asset(
             "assets/images/bird_1.png",
             width: MediaQuery.of(context).size.width * birdWidth / 2,

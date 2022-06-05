@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:bird_game/screens/home.dart';
 import 'package:flutter/material.dart';
+
 class MySplash extends StatefulWidget {
   const MySplash({Key? key}) : super(key: key);
 
@@ -10,14 +12,21 @@ class MySplash extends StatefulWidget {
 }
 
 class _MySplashState extends State<MySplash> {
-
+  final audioplayer = AudioCache();
   @override
-  void initState(){
+  void initState() {
     super.initState();
-    Timer(const Duration(seconds: 5), ()=>Navigator.push(
-      context,
-       MaterialPageRoute(builder: (context)=>MyHome())));
- }
+    // audioplayer.play('sounds/welcome_xp.mp3');
+    Timer(
+        const Duration(seconds: 5),
+        () => {
+              audioplayer.play('sounds/welcome_xp.mp3'),
+              audioplayer.play('sounds/adelshakal.mp3'),
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const MyHome()))
+            });
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
@@ -27,23 +36,32 @@ class _MySplashState extends State<MySplash> {
           children: [
             Stack(
               alignment: Alignment.center,
-              children: [
+              children: const [
                 CircleAvatar(
                   backgroundColor: Colors.black,
                   radius: 70,
                   child: Padding(
-                    padding: const EdgeInsets.all(0.0),
+                    padding: EdgeInsets.all(0.0),
                     child: Image(
-                      image: const AssetImage('assets/images/39227-joystick.gif'),
+                      image: AssetImage('assets/images/39227-joystick.gif'),
                     ),
                   ),
                 )
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 5,
             ),
-            Text('made by pioneers', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 25))
+            const Text('Made with                         ',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 15)),
+            const Text('P I O N E E R S',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25))
           ],
         ),
       ),
