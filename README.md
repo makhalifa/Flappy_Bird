@@ -63,9 +63,7 @@ A mobile game application built with **Flutter**, where players control a bird n
 
 ## 🖼️ Examples
 
-![Game Start Screen](link-to-screenshot1.png)  
-![Gameplay](link-to-screenshot2.png)  
-![Game Over Screen](link-to-screenshot3.png)
+![Gameplay](flappy-bird.gif)  
 
 ## 👥 Contributors
 
