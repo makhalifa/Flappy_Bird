@@ -69,8 +69,8 @@ A mobile game application built with **Flutter**, where players control a bird n
 
 ## 👥 Contributors
 
-- **Eman Khaled**
-- **Abdelrahman**
+- [**Eman Khaled**](https://github.com/emy90)
+- [**Abdelrahman**](https://github.com/Abdelrahmanmohamed6)
 
 ## 🤝 Contributing
 
@@ -84,7 +84,7 @@ Feel free to open issues for any bugs or feature requests.
 ## 👤 Author
 
 - **Mohamed Khalifa**  
-  [GitHub](https://github.com/makhalifa) | [LinkedIn](your-linkedin-profile)
+  [GitHub](https://github.com/makhalifa) | [LinkedIn](https://www.linkedin.com/in/makhalifa)
 
 ## 📄 License
 
